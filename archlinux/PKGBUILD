@@ -1,4 +1,8 @@
 # Maintainer: Florian Mounier aka paradoxxxzero <paradoxxx.zero@gmail.com>
+# Contributor: G. Richard Bellamy <rbellamy@pteradigm.com>
+
+_pkgver=20150420
+
 pkgname=gnome-shell-system-monitor-applet-git
 pkgver=20120504
 pkgrel=1
@@ -9,27 +13,21 @@ license=('GPL3')
 depends=('gnome-shell>=3.3.90' 'libgtop' 'networkmanager')
 makedepends=('git')
 provides=("system-monitor-applet")
-#install=gschemas.install
 
-_gitroot="git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git"
-_gitname="gnome-shell-system-monitor-applet"
+source=(${pkgname}::https://github.com/rbellamy/${pkgname/-/.})
 
-build() {
-    cd ${srcdir}/
-    msg "Connecting to the GIT server..."
-    if [[ -d ${srcdir}/${_gitname} ]] ; then
-	cd ${_gitname}
-        git pull origin
-        msg "The local files are updated..."
-    else
-        git clone ${_gitroot} ${_gitname}
-    fi
-    msg "GIT checkout done."
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${pkgname}"
+
+  echo "${_pkgver}.r$(git rev-list --count master).g$(git log -1 --format="%h")"
 }
 
 package() {
-    cd "$srcdir/gnome-shell-system-monitor-applet"
-    mkdir -p "$pkgdir/usr/share/gnome-shell/extensions/"
-    cp -R "system-monitor@paradoxxx.zero.gmail.com" "$pkgdir/usr/share/gnome-shell/extensions"
+  cd "${pkgname}"
+
+  install -Dm644 "system-monitor@paradoxxx.zero.gmail.com" "${pkgdir}/usr/share/gnome-shell/extensions"
 }
 
+# vim:set ts=2 sw=2 et:
